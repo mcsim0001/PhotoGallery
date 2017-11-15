@@ -22,6 +22,7 @@ public class Utils {
     private Activity _activity;
     public boolean isNoImages = false;
     private ArrayList<String> filePaths;
+
     //Constructor
     public Utils(Activity activity) {
         this._activity = activity;
@@ -30,19 +31,12 @@ public class Utils {
     // Reading file paths
     public ArrayList<String> getFilePaths() {
         filePaths = new ArrayList<String>();
-        File completeDirectory = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM);
-
-
-
-
-
 
         File directory = _activity.getExternalFilesDir(Environment.DIRECTORY_PICTURES);
         getPathsFromDir(directory);
 
         directory = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM);
         getPathsFromDir(directory);
-
 
         if (filePaths.isEmpty()) {
             isNoImages = true;
