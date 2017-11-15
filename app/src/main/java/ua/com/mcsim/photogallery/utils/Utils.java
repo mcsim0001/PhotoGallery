@@ -1,5 +1,6 @@
 package ua.com.mcsim.photogallery.utils;
 
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Point;
 import android.os.Environment;
@@ -19,44 +20,53 @@ import java.util.Locale;
  */
 
 public class Utils {
-    private Context context;
+    private Activity _activity;
     public boolean isNoImages = false;
+    private ArrayList<String> filePaths;
 
     //Constructor
-    public Utils(Context context) {
-        this.context = context;
+    public Utils(Activity activity) {
+        this._activity = activity;
     }
 
     // Reading file paths
     public ArrayList<String> getFilePaths() {
-        ArrayList<String> filePaths = new ArrayList<String>();
-        File directory = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM + File.separator + Constant.PHOTO_ALBUM);
+        filePaths = new ArrayList<String>();
 
-        if (directory.isDirectory()) {
-            File[] listFiles = directory.listFiles();
+        File directory = _activity.getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        getPathsFromDir(directory);
+
+        directory = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM + File.separator + Constant.PHOTO_ALBUM);
+        getPathsFromDir(directory);
+
+
+        return filePaths;
+    }
+
+    private void getPathsFromDir(File dir) {
+        if (dir.isDirectory()) {
+            File[] listFiles = dir.listFiles();
 
             if (listFiles != null) {
-                for (int i=0; i<listFiles.length; i++) {
+                for (int i = 0; i < listFiles.length; i++) {
                     String filePath = listFiles[i].getAbsolutePath();
-                    Log.d("mLog",filePath);
+                    Log.d("mLog", filePath);
 
                     if (isSupportedFile(filePath)) {
                         filePaths.add(filePath);
                     }
                 }
             } else {
-                Toast.makeText(context, "Directory " + Constant.PHOTO_ALBUM + " is empty.", Toast.LENGTH_LONG).show();
+                Toast.makeText(_activity, "Directory " + Constant.PHOTO_ALBUM + " is empty.", Toast.LENGTH_LONG).show();
                 isNoImages = true;
             }
         } else {
-            AlertDialog.Builder alert = new AlertDialog.Builder(context);
+            AlertDialog.Builder alert = new AlertDialog.Builder(_activity);
             alert.setTitle("Error!");
             alert.setMessage(Constant.PHOTO_ALBUM + " directory path is not valid! Please, set the image directory name AppConstant.java class");
             alert.setPositiveButton("Ok", null);
             alert.show();
         }
-
-        return filePaths;
     }
 
     private boolean isSupportedFile(String filePath) {
@@ -70,7 +80,7 @@ public class Utils {
 
     public int getScreenWidth() {
         int columnWidth;
-        WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
+        WindowManager wm = (WindowManager) _activity.getSystemService(Context.WINDOW_SERVICE);
         Display display = wm.getDefaultDisplay();
 
         final Point point = new Point();

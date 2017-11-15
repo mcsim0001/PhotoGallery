@@ -58,16 +58,20 @@ public class MyGridViewAdapter extends BaseAdapter {
         }
 
         file = new File(_filePaths.get(position));
-        imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
-        imageView.setLayoutParams(new GridView.LayoutParams(imageWidth, imageWidth));
-        Picasso.with(_activity.getApplicationContext())
-                .load(file)
-                .resize(imageWidth,imageWidth)
-                .centerCrop()
-                .into(imageView);
-        Log.d("mLog", _filePaths.get(position) + " grid");
+        if (file.length()>0) {
+            imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
+            imageView.setLayoutParams(new GridView.LayoutParams(imageWidth, imageWidth));
+            Picasso.with(_activity.getApplicationContext())
+                    .load(file)
+                    .resize(imageWidth,imageWidth)
+                    .centerCrop()
+                    .into(imageView);
+            Log.d("mLog", _filePaths.get(position) + " grid. Filesize " + file.length());
 
-        imageView.setOnClickListener(new OnImageClickListener(position));
+            imageView.setOnClickListener(new OnImageClickListener(position));
+        } else {
+            Log.d("mLog", "EMPTY FILE" +_filePaths.get(position) + " grid. Filesize " + file.length());
+        }
 
         return imageView;
     }
