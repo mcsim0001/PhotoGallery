@@ -69,29 +69,10 @@ public class MyGridViewAdapter extends BaseAdapter {
                     .into(imageView);
             Log.d("mLog", _filePaths.get(position) + " pos#" + position + " grid. Filesize " + file.length());
 
-            imageView.setOnClickListener(new OnImageClickListener(position));
         } else {
             Log.d("mLog", "EMPTY FILE" +_filePaths.get(position) + " grid. Filesize " + file.length());
         }
 
         return imageView;
-    }
-
-    class OnImageClickListener implements View.OnClickListener {
-
-        int pos;
-
-        public OnImageClickListener(int position) {
-            this.pos = position;
-            Log.d("mLog", "listener created with pos: " + position);
-        }
-
-        @Override
-        public void onClick(View v) {
-            Intent intent = new Intent(_activity, FullScreenViewActivity.class);
-            intent.putExtra(Constant.POSITION_KEY, pos);
-            _activity.startActivity(intent);
-            Log.d("mLog", "onClick pos:" + pos);
-        }
     }
 }

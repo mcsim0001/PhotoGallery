@@ -12,10 +12,12 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.TextView;
 
@@ -60,7 +62,15 @@ public class MainActivity extends AppCompatActivity {
         tvEmpty.setVisibility(View.GONE);
 
         gridView = (GridView) findViewById(R.id.grid_view);
-
+        gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Intent intent = new Intent(MainActivity.this, FullScreenViewActivity.class);
+                intent.putExtra(Constant.POSITION_KEY, position);
+                startActivity(intent);
+                Log.d("mLog", "onClick pos:" + position);
+            }
+        });
 
         initializeGridLayout();
         refreshGridLayout();
@@ -98,10 +108,8 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == REQUEST_TAKE_PHOTO && resultCode == RESULT_OK) {
-            refreshGridLayout();
-
-
         } else cameraUtils.deleteImage();
+        refreshGridLayout();
     }
 
     @Override
