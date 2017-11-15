@@ -23,7 +23,7 @@ public class FullScreenViewActivity extends AppCompatActivity {
 
 
         Utils utils = new Utils(this);
-        int position = getIntent().getIntExtra(Constant.POSITION_KEY, 0);
+        int position = getIntent().getIntExtra(Constant.POSITION_KEY, 1);
 
         ViewPager pager = (ViewPager) findViewById(R.id.pager);
         MyPagerAdpter adapter = new MyPagerAdpter(this, utils.getFilePaths(), getScreenSize());

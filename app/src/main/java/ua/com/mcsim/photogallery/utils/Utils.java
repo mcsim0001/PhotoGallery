@@ -38,7 +38,10 @@ public class Utils {
 
         directory = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM + File.separator + Constant.PHOTO_ALBUM);
         getPathsFromDir(directory);
-
+        if (filePaths.isEmpty()) {
+            isNoImages = true;
+        }
+        Log.d("mLog", "isNomages = " + isNoImages + " Found images:" + filePaths.size());
 
         return filePaths;
     }
@@ -50,15 +53,13 @@ public class Utils {
             if (listFiles != null) {
                 for (int i = 0; i < listFiles.length; i++) {
                     String filePath = listFiles[i].getAbsolutePath();
-                    Log.d("mLog", filePath);
+
 
                     if (isSupportedFile(filePath)) {
                         filePaths.add(filePath);
+                        Log.d("mLog", filePath);
                     }
                 }
-            } else {
-                Toast.makeText(_activity, "Directory " + Constant.PHOTO_ALBUM + " is empty.", Toast.LENGTH_LONG).show();
-                isNoImages = true;
             }
         } else {
             AlertDialog.Builder alert = new AlertDialog.Builder(_activity);

@@ -38,6 +38,7 @@ public class MainActivity extends AppCompatActivity {
     private int columnWidth;
     static final int REQUEST_TAKE_PHOTO = 1;
     private CameraUtils cameraUtils;
+    private TextView tvEmpty;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,16 +56,14 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        TextView tvEmpty = (TextView) findViewById(R.id.tv_empty);
+        tvEmpty = (TextView) findViewById(R.id.tv_empty);
         tvEmpty.setVisibility(View.GONE);
 
         gridView = (GridView) findViewById(R.id.grid_view);
-        utils = new Utils(this);
-        initializeGridLayout();
 
-        if (utils.isNoImages) tvEmpty.setVisibility(View.VISIBLE);
-        gridViewAdapter = new MyGridViewAdapter(MainActivity.this,utils.getFilePaths(), columnWidth);
-        gridView.setAdapter(gridViewAdapter);
+
+        initializeGridLayout();
+        refreshGridLayout();
 
         cameraUtils = new CameraUtils(this);
     }
@@ -72,7 +71,7 @@ public class MainActivity extends AppCompatActivity {
     private void initializeGridLayout() {
         Resources resources = getResources();
         float padding = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, Constant.GRID_PADDING, resources.getDisplayMetrics());
-
+        utils = new Utils(this);
         columnWidth = (int) ((utils.getScreenWidth() - ((Constant.NUM_OF_COLUMNS +1) * padding))/ Constant.NUM_OF_COLUMNS);
 
         gridView.setNumColumns(Constant.NUM_OF_COLUMNS);
@@ -84,15 +83,25 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    private void refreshGridLayout() {
+        utils = new Utils(this);
+        gridViewAdapter = new MyGridViewAdapter(MainActivity.this,utils.getFilePaths(), columnWidth);
+        gridView.setAdapter(gridViewAdapter);
+        if (utils.isNoImages) {
+            tvEmpty.setVisibility(View.VISIBLE);
+        } else {
+            tvEmpty.setVisibility(View.GONE);
+        }
+    }
+
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == REQUEST_TAKE_PHOTO && resultCode == RESULT_OK) {
-            cameraUtils.galleryAddPic();
-            utils = new Utils(this);
-            gridViewAdapter = new MyGridViewAdapter(MainActivity.this,utils.getFilePaths(), columnWidth);
-            gridView.setAdapter(gridViewAdapter);
-        }
+            refreshGridLayout();
+
+
+        } else cameraUtils.deleteImage();
     }
 
     @Override

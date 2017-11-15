@@ -49,6 +49,7 @@ public class MyGridViewAdapter extends BaseAdapter {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
+        Log.d("mLog", "getView method..");
         ImageView imageView;
         File file;
         if (convertView == null) {
@@ -66,7 +67,7 @@ public class MyGridViewAdapter extends BaseAdapter {
                     .resize(imageWidth,imageWidth)
                     .centerCrop()
                     .into(imageView);
-            Log.d("mLog", _filePaths.get(position) + " grid. Filesize " + file.length());
+            Log.d("mLog", _filePaths.get(position) + " pos#" + position + " grid. Filesize " + file.length());
 
             imageView.setOnClickListener(new OnImageClickListener(position));
         } else {
@@ -78,17 +79,19 @@ public class MyGridViewAdapter extends BaseAdapter {
 
     class OnImageClickListener implements View.OnClickListener {
 
-        int position;
+        int pos;
 
         public OnImageClickListener(int position) {
-            this.position = position;
+            this.pos = position;
+            Log.d("mLog", "listener created with pos: " + position);
         }
 
         @Override
         public void onClick(View v) {
             Intent intent = new Intent(_activity, FullScreenViewActivity.class);
-            intent.putExtra(Constant.POSITION_KEY, position);
+            intent.putExtra(Constant.POSITION_KEY, pos);
             _activity.startActivity(intent);
+            Log.d("mLog", "onClick pos:" + pos);
         }
     }
 }

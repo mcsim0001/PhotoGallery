@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.support.v4.content.FileProvider;
 import android.util.Log;
 
 import java.io.File;
@@ -41,7 +42,9 @@ public class CameraUtils {
             }
             // Continue only if the File was successfully created
             if (photoFile != null) {
-                Uri photoURI = Uri.fromFile(photoFile);
+                Uri photoURI = FileProvider.getUriForFile(_activity,
+                        "ua.com.mcsim.photogallery.fileprovider",
+                        photoFile);
                 takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
                 _activity.startActivityForResult(takePictureIntent, REQUEST_TAKE_PHOTO);
             }
@@ -61,7 +64,14 @@ public class CameraUtils {
         // Save a file: path for use with ACTION_VIEW intents
         photoPath = image.getAbsolutePath();
         name = image.getName();
+        Log.d("mLog", "Created temporary file: " + name);
         return image;
+    }
+
+    public void deleteImage(){
+        File image = new File(photoPath);
+        Log.d("mLog", "File " + image.getName() + " deleted");
+        image.delete();
     }
 
 
