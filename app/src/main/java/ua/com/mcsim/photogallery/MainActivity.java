@@ -4,12 +4,15 @@ import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.content.FileProvider;
+import android.support.v4.util.Pair;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -19,6 +22,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.AdapterView;
 import android.widget.GridView;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.io.File;
@@ -67,8 +71,18 @@ public class MainActivity extends AppCompatActivity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Intent intent = new Intent(MainActivity.this, FullScreenViewActivity.class);
                 intent.putExtra(Constant.POSITION_KEY, position);
-                startActivity(intent);
-                Log.d("mLog", "onClick pos:" + position);
+
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+
+                    view.setTransitionName(getString(R.string.imageview_transition));
+
+                    Pair<View, String> pair1 = Pair.create(view, view.getTransitionName());
+                    ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(MainActivity.this, pair1);
+                    startActivity(intent, options.toBundle());
+                } else {
+                    startActivity(intent);
+                    Log.d("mLog", "onClick pos:" + position);
+                }
             }
         });
 
@@ -82,12 +96,12 @@ public class MainActivity extends AppCompatActivity {
         Resources resources = getResources();
         float padding = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, Constant.GRID_PADDING, resources.getDisplayMetrics());
         utils = new Utils(this);
-        columnWidth = (int) ((utils.getScreenWidth() - ((Constant.NUM_OF_COLUMNS +1) * padding))/ Constant.NUM_OF_COLUMNS);
+        columnWidth = (int) ((utils.getScreenWidth() - ((Constant.NUM_OF_COLUMNS + 1) * padding)) / Constant.NUM_OF_COLUMNS);
 
         gridView.setNumColumns(Constant.NUM_OF_COLUMNS);
         gridView.setColumnWidth(columnWidth);
         gridView.setStretchMode(GridView.NO_STRETCH);
-        gridView.setPadding((int) padding, (int) padding,(int) padding,(int) padding);
+        gridView.setPadding((int) padding, (int) padding, (int) padding, (int) padding);
         gridView.setHorizontalSpacing((int) padding);
         gridView.setVerticalSpacing((int) padding);
 
@@ -95,7 +109,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void refreshGridLayout() {
         utils = new Utils(this);
-        gridViewAdapter = new MyGridViewAdapter(MainActivity.this,utils.getFilePaths(), columnWidth);
+        gridViewAdapter = new MyGridViewAdapter(MainActivity.this, utils.getFilePaths(), columnWidth);
         gridView.setAdapter(gridViewAdapter);
         if (utils.isNoImages) {
             tvEmpty.setVisibility(View.VISIBLE);

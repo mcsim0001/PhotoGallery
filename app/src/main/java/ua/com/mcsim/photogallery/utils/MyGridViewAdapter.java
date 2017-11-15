@@ -2,6 +2,7 @@ package ua.com.mcsim.photogallery.utils;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.os.Build;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +14,7 @@ import java.io.File;
 import java.util.ArrayList;
 
 import ua.com.mcsim.photogallery.FullScreenViewActivity;
+import ua.com.mcsim.photogallery.R;
 
 
 /**
@@ -72,6 +74,10 @@ public class MyGridViewAdapter extends BaseAdapter {
         } else {
             Log.d("mLog", "EMPTY FILE" +_filePaths.get(position) + " grid. Filesize " + file.length());
         }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            imageView.setTransitionName(_activity.getString(R.string.imageview_transition));
+        }
+
 
         return imageView;
     }
