@@ -8,7 +8,6 @@ import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.Display;
 import android.view.WindowManager;
-import android.widget.Toast;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -23,7 +22,6 @@ public class Utils {
     private Activity _activity;
     public boolean isNoImages = false;
     private ArrayList<String> filePaths;
-
     //Constructor
     public Utils(Activity activity) {
         this._activity = activity;
@@ -32,12 +30,20 @@ public class Utils {
     // Reading file paths
     public ArrayList<String> getFilePaths() {
         filePaths = new ArrayList<String>();
+        File completeDirectory = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM);
+
+
+
+
+
 
         File directory = _activity.getExternalFilesDir(Environment.DIRECTORY_PICTURES);
         getPathsFromDir(directory);
 
-        directory = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM + File.separator + Constant.PHOTO_ALBUM);
+        directory = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM);
         getPathsFromDir(directory);
+
+
         if (filePaths.isEmpty()) {
             isNoImages = true;
         }
@@ -49,22 +55,27 @@ public class Utils {
     private void getPathsFromDir(File dir) {
         if (dir.isDirectory()) {
             File[] listFiles = dir.listFiles();
-
+            Log.d("mLog", "Search in Directory " + dir.getAbsolutePath());
             if (listFiles != null) {
                 for (int i = 0; i < listFiles.length; i++) {
                     String filePath = listFiles[i].getAbsolutePath();
 
-
                     if (isSupportedFile(filePath)) {
                         filePaths.add(filePath);
                         Log.d("mLog", filePath);
+                    } else {
+                        if (isSupportedDirectory(filePath)){
+                            File newDir = new File (Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM) + File.separator + listFiles[i].getName());
+                            Log.d("mLog", "Check Directory " + newDir.getAbsolutePath());
+                            getPathsFromDir(newDir);
+                        }
                     }
                 }
             }
         } else {
             AlertDialog.Builder alert = new AlertDialog.Builder(_activity);
             alert.setTitle("Error!");
-            alert.setMessage(Constant.PHOTO_ALBUM + " directory path is not valid! Please, set the image directory name AppConstant.java class");
+            alert.setMessage(Constant.PHOTO_ALBUM + " directory path is not valid! But you can make new images with camera!");
             alert.setPositiveButton("Ok", null);
             alert.show();
         }
@@ -77,6 +88,10 @@ public class Utils {
             return true;
         else
             return false;
+    }
+
+    private boolean isSupportedDirectory(String filePath) {
+        return !filePath.contains(".");
     }
 
     public int getScreenWidth() {
